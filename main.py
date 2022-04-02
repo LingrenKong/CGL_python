@@ -51,7 +51,7 @@ def main(school,save=True,cross_valid = False, lambs = None):
     input_path = './data'
     data_file = '{}/{}.csv'.format(input_path, school)
     link_file = '{}/{}.link'.format(input_path, school)
-    X, links, concept = read_file(data_file, link_file, dense_input=True)
+    X, links, concept = read_file(data_file, link_file, concept_file=None, file_type='dense')#强行凑合
     print('Step 1: reading %s\'s file is done.===================' % school)
     links = links[:, [1, 0]]
     X = row_normlize(X)
@@ -67,7 +67,7 @@ def main(school,save=True,cross_valid = False, lambs = None):
         eval_res = []
         for lamb in lambs:
             global A
-            A,F = model.cgl_rank(X,triple_train,lamb=lamb,eta=1.0,tolerence=0.001,silence=False)
+            A,F, _ = model.cgl_rank(X,triple_train,lamb=lamb,eta=1.0,tolerence=0.001,silence=False)
             print('Step 3: model training is done.====================')
             train_model_eval = evaluation(F,triple_train)
             print('lambda = {}'.format(lamb))
@@ -85,7 +85,7 @@ def main(school,save=True,cross_valid = False, lambs = None):
         print('best parameter: lambda {} ,test auc: {}'.format(bst_para['parameter'],bst_para['evaluation']))
     # 用全量数据训练模型
     triple = generate_triple(trn, sample_size=0.8)
-    A, F = model.cgl_rank(X, triple, lamb=bst_para['parameter'], eta=1.0, tolerence=0.001, silence=False)
+    A, F, _ = model.cgl_rank(X, triple, lamb=bst_para['parameter'], eta=1.0, tolerence=0.001, silence=False)
     
     weight_edge_list = generate_course_pairs(F, percentile=90)
     print(weight_edge_list)
