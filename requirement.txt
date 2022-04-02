@@ -2,3 +2,4 @@ scikit-learn
 networkx
 matplotlib
 pyperclip
+pandas
